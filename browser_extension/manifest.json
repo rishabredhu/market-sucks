@@ -7,7 +7,7 @@
    "description": "Extracts job details from the current tab and saves them to a database.",
    "permissions": ["activeTab", "storage", "scripting"],
    "host_permissions": ["<all_urls>",  "http://*/*", "https://*/*"],
-   
+
    "icons": {
      "128": "icon.png"
    },
@@ -27,43 +27,4 @@
      "service_worker": "worker.js"
    }
  }
-
-
-
-//  // Old manifest.json
-// """
-//  {
-//    "action": {
-//       "default_popup": "html/popup.html"
-//    },
-//    "background": {
-//       "service_worker": "worker.js"
-//    },
-//    "content_scripts": [ {
-//       "js": [ "content.js" ],
-//       "matches": [ "\u003Call_urls>" ]
-//    } ],
-//    "default_locale": "en",
-//    "description": "__MSG_shortDesc__",
-//    "host_permissions": [ "http://*/*", "https://*/*" ],
-//    "icons": {
-//       "128": "icons/128x128.png",
-//       "16": "icons/16x16.png",
-//       "32": "icons/32x32.png",
-//       "48": "icons/48x48.png",
-//       "64": "icons/64x64.png"
-//    },
-//    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAky5/04Xq31TWWAG/HOnOpNhFSnusKR5VzD1WvGyk5bpQE71PEtPE+9RyPmQbTKi+kAxSpbnKSA5LTX5m0VpgvpkWwZqP1bN4ypkHh9XK8kUX1QFqa8F62YgKDnvhiU3YBlPnGd03yIS90SmWJHqUrnS6YXb9kYHCm6ofJsL2XU3q8KoFcgdXEtamLCDHDv4nfCTViJ5fJyshDFcr4Tnu6gJ/DRfs/ZYufWsMou6ZS6wh693ur7fsooy/b9NcsB21/+4/yDHkog6kamQW+MI2S8cN1jaoctvGtq4DZEnX0eIjEQCJqjwP1jhEWGT5isfrQkaWmq4oEZcU0b7aSOpVFwIDAQAB",
-//    "manifest_version": 3,
-//    "name": "__MSG_appName__",
-//    "permissions": [ "storage", "downloads", "activeTab", "scripting", "tabs" ],
-//    "update_url": "https://clients2.google.com/service/update2/crx",
-//    "version": "1.0.1",
-//    "web_accessible_resources": [ {
-//       "matches": [ "http://*/*", "https://*/*" ],
-//       "resources": [ "icons/*.png" ]
-//    } ]
-//  }
-
-//  """
- 
+``
