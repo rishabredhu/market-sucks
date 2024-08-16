@@ -1,2 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details Extractor</title>
+    <style>
+        /* ... (previous styles) ... */
+        .hidden { display: none; }
+        #previewForm {
+            margin-top: 15px;
+        }
+        #previewForm label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        #previewForm input, #previewForm textarea {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        #previewForm textarea {
+            height: 100px;
+        }
+        #confirmBtn {
+            background-color: #2ecc71;
+            margin-top: 10px;
+        }
+        #confirmBtn:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Job Details Extractor</h2>
+        <div id="status">Ready to extract job details.</div>
+        <button id="extractBtn">Extract Job Details</button>
+        <form id="previewForm" class="hidden">
+            <label for="jobTitle">Job Title:</label>
+            <input type="text" id="jobTitle" name="jobTitle">
+            <label for="company">Company:</label>
+            <input type="text" id="company" name="company">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+            <button id="confirmBtn" type="submit">Confirm and Save</button>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const extractBtn = document.getElementById('extractBtn');
+            const statusElement = document.getElementById('status');
+            const previewForm = document.getElementById('previewForm');
+            const confirmBtn = document.getElementById('confirmBtn');
 
+            extractBtn.addEventListener('click', function() {
+                statusElement.textContent = 'Extracting job details...';
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    const activeTab = tabs[0];
+                    chrome.tabs.sendMessage(activeTab.id, {"message": "extract_job_details"}, function(response) {
+                        if (chrome.runtime.lastError) {
+                            statusElement.textContent = 'Error: ' + chrome.runtime.lastError.message;
+                        } else if (response && response.success) {
+                            statusElement.textContent = 'Job details extracted. Please review and confirm.';
+                            document.getElementById('jobTitle').value = response.data.title || '';
+                            document.getElementById('company').value = response.data.company || '';
+                            document.getElementById('description').value = response.data.description || '';
+                            extractBtn.classList.add('hidden');
+                            previewForm.classList.remove('hidden');
+                        } else {
+                            statusElement.textContent = 'Failed to extract job details.';
+                        }
+                    });
+                });
+            });
+
+            previewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const jobDetails = {
+                    title: document.getElementById('jobTitle').value,
+                    company: document.getElementById('company').value,
+                    description: document.getElementById('description').value,
+                    url: '' // We'll need to get this from the active tab
+                };
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    jobDetails.url = tabs[0].url;
+                    chrome.runtime.sendMessage({action: "saveJobDetails", data: jobDetails}, function(response) {
+                        if (response && response.success) {
+                            statusElement.textContent = 'Job details saved successfully!';
+                            previewForm.classList.add('hidden');
+                        } else {
+                            statusElement.textContent = 'Failed to save job details.';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
 
