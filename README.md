@@ -19,8 +19,8 @@ Job Details Extractor is a browser extension that allows users to easily extract
 ### Setting up the Backend
 1. Clone the repository:
    ```
-   git clone https://github.com/YOUR_USERNAME/job-details-extractor.git
-   cd job-details-extractor
+   git clone https://github.com/rishabredhu/market-sucks.git
+   cd market-sucks
    ```
 
 2. Create and activate a virtual environment:
@@ -54,7 +54,7 @@ Job Details Extractor is a browser extension that allows users to easily extract
 
 ## Project Structure
 ```
-job-details-extractor/
+market-sucks/
 │
 ├── api_server/
 │   ├── app.py
