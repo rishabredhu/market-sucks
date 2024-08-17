@@ -1,13 +1,14 @@
-# Job Details Extractor
+# Automate Tech Job Application
 
 ## Description
-Job Details Extractor is a browser extension that allows users to easily extract and save job posting details from various websites. It provides a simple interface to extract, review, edit, and store job information in a personal database.
+market-scuks is a browser extension that allows users to easily extract and save job posting details from various websites - currently greenhouse.job.io . It provides a simple extension to extract, review, edit, and store job information in a personal database. 
 
-## Features
-- One-click job details extraction from the current webpage
-- Preview and edit extracted information before saving
-- Stores job details in a personal database
-- User-friendly popup interface
+## Current Work
+1. Get the Job Details
+2. Align with resume from your resume bank the job aligns the most (home ATS system)
+3. Select that resume
+4. Work with simplify/ Create your own job filler for major websites - workday, greenhouse, job-levers. 
+
 
 ## Installation
 
