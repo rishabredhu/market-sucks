@@ -1,38 +1,48 @@
-chrome.commands.onCommand.addListener(function(command) {
-  if (command === "save-job-link") {
-    console.log("Save job link command received");
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-      let url = tabs[0].url;
 
-      // Only save LinkedIn URLs
-      if (url.includes("linkedin.com")) {
-        console.log("Current LinkedIn URL:", url);
+console.log('Background script loaded');
 
-        fetch('http://127.0.0.1:5000/save-job', {
-          method: 'POST',
-          headers: {
+const API_ENDPOINT = 'http://127.0.0.1:5000/api/job'; // Update this with your actual server endpoint
+
+
+
+function sendToServer(data) {
+    return fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({url: url}),
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          chrome.tabs.sendMessage(tabs[0].id, {
-            action: "showNotification", 
-            message: "LinkedIn job link saved successfully!"
-          });
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          chrome.tabs.sendMessage(tabs[0].id, {
-            action: "showNotification", 
-            message: "Error saving LinkedIn job link."
-          });
-        });
-      } else {
-        console.log("Not a LinkedIn URL, ignoring.");
-      }
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(result => {
+        console.log('Job details sent successfully:', result);
+        return result;
+    })
+    .catch(error => {
+        console.error('Error sending job details to server:', error);
+        throw error;
     });
-  }
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "saveJobDetails") {
+        sendToServer(message.data)
+            .then((serverResponse) => {
+                console.log('Server response:', serverResponse);
+                sendResponse({ success: true, data: serverResponse });
+            })
+            .catch((error) => {
+                console.error('Error in saveJobDetails:', error);
+                sendResponse({ success: false, error: error.message });
+            });
+        return true; // Indicates that the response will be sent asynchronously
+    }
 });
+
+// Optional: Log when the background script is loaded
+console.log('Background script (worker.js) loaded');

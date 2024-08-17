@@ -1,73 +1,34 @@
+# api_server/app.py
 from flask import Flask, request, jsonify
-from db_manager.database import Database
-from job_processor.processor import JobProcessor
+from flask_cors import CORS
+import sys
+import os
+
+# Add the project root to the Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from db_manager.database_alchemy import get_db, Job
 
 app = Flask(__name__)
-db = Database()
-processor = JobProcessor()
+CORS(app)  # Enable CORS for all routes
 
-@app.route('/api/store_job', methods=['POST'])
-def receive_job():
+@app.route('/api/job', methods=['POST'])
+def add_job():
     data = request.json
-    if not data or 'url' not in data:
-        return jsonify({"error": "Invalid data"}), 400
+    db = next(get_db())
     
-    job_url = data['url']
-    job_details = processor.extract_job_details(job_url)
+    new_job = Job(
+        title=data['title'],
+        location=data['location'],
+        fulDescription=data['description'],
+        url = data['url']
+    )
     
-    if job_details:
-        db.insert_job(job_details)
-        return jsonify({"message": "Job details saved successfully"}), 201
-    else:
-        return jsonify({"error": "Failed to extract job details"}), 422
-
-@app.route('/api/diplay_jobs', methods=['GET'])
-def get_jobs():
-    jobs = db.get_all_jobs()
-    return jsonify(jobs)
+    db.add(new_job)
+    db.commit()
+    db.refresh(new_job)
+    
+    return jsonify({"message": "Job added successfully", "id": new_job.id}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-# import sys
-# import os
-
-# # Add the parent directory to the system path
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# from db_manager.database import save_job_to_db, get_all_jobs
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-
-
-
-
-# app = Flask(__name__)
-# CORS(app)  # This allows the extension to make requests to your local server
-
-# @app.route('/')
-# def index():
-#     return "Server is running", 200
-
-# @app.route('/save-job', methods=['POST'])
-# def save_job():
-#     data = request.json
-#     url = data.get('url')
-#     if url:
-#         save_job_to_db(url)
-#         return jsonify({"message": "Job link saved successfully"}), 200
-#     else:
-#         return jsonify({"error": "No URL provided"}), 400
-
-# @app.route('/get-job', methods=['GET'])
-# def get_job():
-#     try: 
-#         print(type(get_all_jobs()))
-#     except:
-#         return jsonify({"error": "No jobs found"}), 400
-
-# if __name__ == '__main__':
-#     app.run(port=5000, debug=True)

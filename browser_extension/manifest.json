@@ -5,8 +5,16 @@
 
 
    "description": "Extracts job details from the current tab and saves them to a database.",
-   "permissions": ["activeTab", "storage", "scripting"],
-   "host_permissions": ["<all_urls>",  "http://*/*", "https://*/*"],
+   "permissions": [
+    "activeTab", 
+    "storage", 
+    "scripting"
+  ],
+   "host_permissions": [
+    "https://job-boards.greenhouse.io/*",
+    "http://localhost:5000/*", 
+    "https://myjobs.greenhouse.com/*"
+  ],
 
    "icons": {
      "128": "icon.png"
@@ -18,10 +26,10 @@
   
    },
    "content_scripts": [
-     {
-       "matches": ["<all_urls>"],
-       "js": ["content.js"]
-     }
+    {
+      "matches": ["https://job-boards.greenhouse.io/*"],
+      "js": ["content/content_greenhouse.js"]
+    }
    ],
    "background": {
      "service_worker": "worker.js"

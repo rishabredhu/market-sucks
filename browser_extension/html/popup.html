@@ -1,43 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Details Extractor</title>
     <style>
-        /* ... (previous styles) ... */
-        .hidden { display: none; }
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #status {
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Button Styles */
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+        }
+
+        #extractBtn {
+            background-color: #3498db;
+        }
+
+        #extractBtn:hover {
+            background-color: #2980b9;
+        }
+
+        #confirmBtn {
+            background-color: #2ecc71;
+        }
+
+        #confirmBtn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Form Styles */
         #previewForm {
             margin-top: 15px;
         }
+
         #previewForm label {
             display: block;
             margin-top: 10px;
             font-weight: bold;
+            color: #2c3e50;
         }
-        #previewForm input, #previewForm textarea {
+
+        #previewForm input,
+        #previewForm textarea {
             width: 100%;
-            padding: 5px;
+            padding: 10px;
             margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #2c3e50;
+            background-color: #ecf0f1;
         }
+
         #previewForm textarea {
             height: 100px;
+            resize: none;
         }
-        #confirmBtn {
-            background-color: #2ecc71;
-            margin-top: 10px;
-        }
-        #confirmBtn:hover {
-            background-color: #27ae60;
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Job Details Extractor</h2>
-        <div id="status">Ready to extract job details.</div>
+        <div id="status">Press the button below to extract</div>
         <button id="extractBtn">Extract Job Details</button>
         <form id="previewForm" class="hidden">
             <label for="jobTitle">Job Title:</label>
@@ -49,56 +121,7 @@
             <button id="confirmBtn" type="submit">Confirm and Save</button>
         </form>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const extractBtn = document.getElementById('extractBtn');
-            const statusElement = document.getElementById('status');
-            const previewForm = document.getElementById('previewForm');
-            const confirmBtn = document.getElementById('confirmBtn');
-
-            extractBtn.addEventListener('click', function() {
-                statusElement.textContent = 'Extracting job details...';
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    const activeTab = tabs[0];
-                    chrome.tabs.sendMessage(activeTab.id, {"message": "extract_job_details"}, function(response) {
-                        if (chrome.runtime.lastError) {
-                            statusElement.textContent = 'Error: ' + chrome.runtime.lastError.message;
-                        } else if (response && response.success) {
-                            statusElement.textContent = 'Job details extracted. Please review and confirm.';
-                            document.getElementById('jobTitle').value = response.data.title || '';
-                            document.getElementById('company').value = response.data.company || '';
-                            document.getElementById('description').value = response.data.description || '';
-                            extractBtn.classList.add('hidden');
-                            previewForm.classList.remove('hidden');
-                        } else {
-                            statusElement.textContent = 'Failed to extract job details.';
-                        }
-                    });
-                });
-            });
-
-            previewForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const jobDetails = {
-                    title: document.getElementById('jobTitle').value,
-                    company: document.getElementById('company').value,
-                    description: document.getElementById('description').value,
-                    url: '' // We'll need to get this from the active tab
-                };
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    jobDetails.url = tabs[0].url;
-                    chrome.runtime.sendMessage({action: "saveJobDetails", data: jobDetails}, function(response) {
-                        if (response && response.success) {
-                            statusElement.textContent = 'Job details saved successfully!';
-                            previewForm.classList.add('hidden');
-                        } else {
-                            statusElement.textContent = 'Failed to save job details.';
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+    <script src="popup.js"></script>
 </body>
-</html>
 
+</html>
